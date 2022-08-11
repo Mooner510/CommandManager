@@ -14,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashSet;
 
 public final class CommandManager extends JavaPlugin implements Listener {
     private static ImmutableSet<String> allowedCommands;
