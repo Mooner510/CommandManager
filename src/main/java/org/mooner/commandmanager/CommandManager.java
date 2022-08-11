@@ -1,6 +1,7 @@
 package org.mooner.commandmanager;
 
 import com.google.common.collect.ImmutableSet;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,6 +24,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("Plugin Enabled!");
+        Bukkit.getPluginManager().registerEvents(this, this);
     }
 
     @Override
