@@ -1,0 +1,8 @@
+name: CommandManager
+version: 1.0
+main: org.mooner.commandmanager.CommandManager
+api-version: 1.18
+
+commands:
+  reloadcommand:
+    usage: "/reloadcommand"
