@@ -2,7 +2,15 @@ name: CommandManager
 version: 1.0
 main: org.mooner.commandmanager.CommandManager
 api-version: 1.18
+depend:
+  - BungeeAPI
 
 commands:
   reloadcommand:
     usage: "/reloadcommand"
+  spawn:
+    usage: "/spawn"
+    aliases:
+      - 스폰
+      - 넴주
+      - tmvhs
