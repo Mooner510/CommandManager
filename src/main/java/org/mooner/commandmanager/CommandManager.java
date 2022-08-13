@@ -1,5 +1,6 @@
 package org.mooner.commandmanager;
 
+import com.google.common.collect.ImmutableSet;
 import de.epiceric.shopchest.event.ShopCreateEvent;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -7,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -189,6 +191,8 @@ public final class CommandManager extends JavaPlugin implements Listener {
         }
     }
 
+    ImmutableSet<Material> helmets = ImmutableSet.of(Material.CHAINMAIL_HELMET, Material.DIAMOND_HELMET, Material.GOLDEN_HELMET, Material.IRON_HELMET, Material.LEATHER_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET, Material.PUMPKIN, Material.SKELETON_SKULL, Material.WITHER_SKELETON_SKULL, Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.ZOMBIE_HEAD, Material.PLAYER_HEAD);
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(command.getName().equals("reloadcommand")) {
@@ -216,11 +220,24 @@ public final class CommandManager extends JavaPlugin implements Listener {
         } else if(command.getName().equals("hat")) {
             if(!(sender instanceof Player p)) return true;
             final ItemStack i = p.getInventory().getItemInMainHand().clone();
-            if(i.getType() == Material.AIR) {
-                p.sendMessage(chat("&c손에 아이템을 들어주세요!"));
+            if(helmets.contains(i.getType())) {
+                p.sendMessage(chat("&c그건 직접 머리에 쓸 수 있지 않나요?"));
                 return true;
             }
-            p.getInventory().setItemInMainHand(p.getInventory().getHelmet());
+            final ItemStack helmet = p.getInventory().getHelmet();
+            if(helmet != null && helmet.getEnchantmentLevel(Enchantment.BINDING_CURSE) > 0) {
+                p.sendMessage(chat("&c이런 이런.. 뺄 수 없는 아이템을 이 명령어로 빼려고 하지 마세요. &b/귀속저주&c가 있잖아요?"));
+                return true;
+            }
+            if(i.getType() == Material.AIR) {
+                if(helmet == null || helmet.getType() == Material.AIR) {
+                    p.sendMessage(chat("&c손에 아이템을 들어주세요!"));
+                } else {
+                    p.sendMessage(chat("&a모자를 뺐습니다."));
+                }
+                return true;
+            }
+            p.getInventory().setItemInMainHand(helmet);
             p.getInventory().setHelmet(i);
             p.sendMessage(chat("&a멋진 모자네요!"));
             return true;
