@@ -239,6 +239,10 @@ public final class CommandManager extends JavaPlugin implements Listener {
             } else {
                 e.getPlayer().chat("/튜토리얼");
             }
+        } else {
+            if (!PlayerDB.init.isTutorial(e.getPlayer())) {
+                BungeeAPI.sendBungeePlayer(e.getPlayer().getName(), ServerType.SPAWN_SERVER);
+            }
         }
     }
 
