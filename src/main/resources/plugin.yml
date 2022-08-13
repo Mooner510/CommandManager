@@ -4,6 +4,7 @@ main: org.mooner.commandmanager.CommandManager
 api-version: 1.18
 depend:
   - BungeeAPI
+  - ShopChest-1.18
 
 commands:
   reloadcommand:
