@@ -196,6 +196,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        if(e.getPlayer().isOp()) return;
         if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER) {
             if(e.getPlayer().hasPlayedBefore()) {
                 e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
