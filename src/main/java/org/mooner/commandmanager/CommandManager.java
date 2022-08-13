@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mooner.commandmanager.listener.DisableWorld;
 import org.mooner.commandmanager.shop.ShopDistance;
 import org.mooner.moonerbungeeapi.api.BungeeAPI;
 import org.mooner.moonerbungeeapi.api.ServerType;
@@ -36,7 +37,7 @@ import static org.mooner.moonerbungeeapi.api.Rank.chat;
 
 public final class CommandManager extends JavaPlugin implements Listener {
     public static CommandManager plugin;
-    private static int port;
+    public static int port;
 
     private static HashSet<String> allowedCommands;
     private static HashSet<Material> bannedItem;
@@ -50,6 +51,9 @@ public final class CommandManager extends JavaPlugin implements Listener {
         port = Bukkit.getServer().getPort();
         getLogger().info("Plugin Enabled!");
         Bukkit.getPluginManager().registerEvents(this, this);
+        if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER || BungeeAPI.getServerType(port) == ServerType.MAIN_SERVER) {
+            Bukkit.getPluginManager().registerEvents(new DisableWorld(), this);
+        }
         reload();
     }
 
@@ -233,7 +237,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
                     e.getPlayer().sendMessage("");
                     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 1.5f);
                     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.5f);
-                    e.getPlayer().sendTitle(chat("&6튜토리얼 완료!"), "&eLite24&f에 오신 것을 환영합니다!", 20, 120, 40);
+                    e.getPlayer().sendTitle(chat("&6튜토리얼 완료!"), chat("&eLite24&f에 오신 것을 환영합니다!"), 20, 120, 40);
                 }
             }
         }
