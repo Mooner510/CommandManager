@@ -179,6 +179,13 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onCommandRun(PlayerCommandPreprocessEvent e) {
         if(e.isCancelled()) return;
         final String[] s = e.getMessage().substring(1).split(" ");
+        if(s[0].equals("is") || s[0].equals("island")) {
+            if(BungeeAPI.getServerType(port) != ServerType.MAIN_SERVER) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 메인 서버에서만 사용 가능합니다.");
+                return;
+            }
+        }
         if(!e.getPlayer().isOp() && !allowedCommands.contains(s[0])) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 사용할 수 없습니다! 관리자에게 문의하세요.");
