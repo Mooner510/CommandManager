@@ -192,7 +192,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCommandRun(PlayerCommandPreprocessEvent e) {
         if(e.isCancelled()) return;
         final String[] s = e.getMessage().substring(1).split(" ");

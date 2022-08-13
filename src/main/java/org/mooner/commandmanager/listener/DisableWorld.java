@@ -33,68 +33,68 @@ public class DisableWorld implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlace(BlockPlaceEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onMultiPlace(BlockMultiPlaceEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBucketFill(PlayerBucketEmptyEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBreak(BlockBreakEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBucketFill(PlayerBucketFillEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPistonExtend(BlockPistonExtendEvent e) {
         if(!e.getBlock().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPistonRetract(BlockPistonRetractEvent e) {
         if(!e.getBlock().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInteractEntity(PlayerInteractEntityEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onTeleport(PlayerTeleportEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
@@ -102,13 +102,13 @@ public class DisableWorld implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onLightning(LightningStrikeEvent e) {
         if(!e.getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onSpread(BlockSpreadEvent e) {
         if (e.getBlock().getType() == Material.FIRE) {
             if(!e.getBlock().getWorld().getName().startsWith("world")) return;
@@ -116,7 +116,7 @@ public class DisableWorld implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onForm(BlockFormEvent e) {
         if (e.getBlock().getType() == Material.SNOW) {
             if(!e.getBlock().getWorld().getName().startsWith("world")) return;
@@ -124,32 +124,32 @@ public class DisableWorld implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageByEntityEvent e) {
         if(!e.getDamager().isOp()) return;
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageByBlockEvent e) {
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent e) {
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onSpawn(EntitySpawnEvent e) {
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockChange(EntityChangeBlockEvent e) {
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
