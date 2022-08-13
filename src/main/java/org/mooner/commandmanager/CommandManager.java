@@ -154,15 +154,19 @@ public final class CommandManager extends JavaPlugin implements Listener {
         }
         FileConfiguration config = loadConfig(dataPath, "commands.yml");
         allowedCommands = new HashSet<>();
-        allowedCommands.addAll(config.getStringList("global"));
-        allowedCommands.addAll(config.getStringList("server."+BungeeAPI.getServerType(Bukkit.getServer().getPort()).getTag()));
+        final ConfigurationSection g = config.getConfigurationSection("global");
+        if(g != null) allowedCommands.addAll(g.getKeys(false));
+        final ConfigurationSection css = config.getConfigurationSection("server." + BungeeAPI.getServerType(Bukkit.getServer().getPort()).getTag());
+        if(css != null) allowedCommands.addAll(css.getKeys(false));
 
         FileConfiguration items = loadConfig(dataPath, "banItem.yml");
         bannedItem = new HashSet<>();
-        bannedItem.addAll(items.getStringList("global").stream()
+        final ConfigurationSection global = items.getConfigurationSection("global");
+        if(global != null) bannedItem.addAll(global.getKeys(false).stream()
                 .map(Material::valueOf)
                 .toList());
-        bannedItem.addAll(items.getStringList("server."+BungeeAPI.getServerType(Bukkit.getServer().getPort()).getTag()).stream()
+        final ConfigurationSection cs = items.getConfigurationSection("server." + BungeeAPI.getServerType(Bukkit.getServer().getPort()).getTag());
+        if(cs != null) bannedItem.addAll(cs.getKeys(false).stream()
                 .map(Material::valueOf)
                 .toList());
 
