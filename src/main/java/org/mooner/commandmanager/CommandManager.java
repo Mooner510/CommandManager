@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mooner.commandmanager.shop.ShopDistance;
@@ -31,6 +32,7 @@ import static org.mooner.moonerbungeeapi.api.Rank.chat;
 
 public final class CommandManager extends JavaPlugin implements Listener {
     public static CommandManager plugin;
+    private static int port;
 
     private static HashSet<String> allowedCommands;
     private static HashSet<Material> bannedItem;
@@ -41,6 +43,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
+        port = Bukkit.getServer().getPort();
         getLogger().info("Plugin Enabled!");
         Bukkit.getPluginManager().registerEvents(this, this);
         reload();
@@ -191,7 +194,18 @@ public final class CommandManager extends JavaPlugin implements Listener {
         }
     }
 
-    ImmutableSet<Material> helmets = ImmutableSet.of(Material.CHAINMAIL_HELMET, Material.DIAMOND_HELMET, Material.GOLDEN_HELMET, Material.IRON_HELMET, Material.LEATHER_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET, Material.PUMPKIN, Material.SKELETON_SKULL, Material.WITHER_SKELETON_SKULL, Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.ZOMBIE_HEAD, Material.PLAYER_HEAD);
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER) {
+            if(e.getPlayer().hasPlayedBefore()) {
+                e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
+            } else {
+                e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, -55.5, 0.5));
+            }
+        }
+    }
+
+    ImmutableSet<Material> helmets = ImmutableSet.of(Material.CHAINMAIL_HELMET, Material.DIAMOND_HELMET, Material.GOLDEN_HELMET, Material.IRON_HELMET, Material.LEATHER_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET, Material.CARVED_PUMPKIN, Material.SKELETON_SKULL, Material.WITHER_SKELETON_SKULL, Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.ZOMBIE_HEAD, Material.PLAYER_HEAD);
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -211,7 +225,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
         } else if(command.getName().equals("tutorial")) {
             if(!(sender instanceof Player p)) return true;
             if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
-                p.teleport(new Location(Bukkit.getWorld("world"), 0.5, -56, 0.5, -90, 0));
+                p.teleport(new Location(Bukkit.getWorld("world"), 0.5, -55, 0.5, -90, 0));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             } else {
                 p.sendMessage(chat("&c스폰 서버에서만 사용 가능합니다!"));
