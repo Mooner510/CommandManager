@@ -44,6 +44,13 @@ public final class CommandManager extends JavaPlugin implements Listener {
     private static HashMap<Material, ShopDistance> shopData;
     public static final String dataPath = "../db/";
 
+    private void setWorldDifficulty(World w, Difficulty d) {
+        if(w == null) return;
+        w.setKeepSpawnInMemory(false);
+        w.setDifficulty(d);
+        Bukkit.getConsoleSender().sendMessage(chat("&6Set Difficulty to "+d+" in world " + w.getName()));
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -51,8 +58,14 @@ public final class CommandManager extends JavaPlugin implements Listener {
         port = Bukkit.getServer().getPort();
         getLogger().info("Plugin Enabled!");
         Bukkit.getPluginManager().registerEvents(this, this);
-        if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER || BungeeAPI.getServerType(port) == ServerType.MAIN_SERVER) {
-            Bukkit.getPluginManager().registerEvents(new DisableWorld(), this);
+        switch (BungeeAPI.getServerType(port)) {
+            case MAIN_SERVER, SPAWN_SERVER -> {
+                Bukkit.getPluginManager().registerEvents(new DisableWorld(), this);
+                for (World w : Bukkit.getWorlds()) setWorldDifficulty(w, Difficulty.PEACEFUL);
+            }
+            default -> {
+                for (World w : Bukkit.getWorlds()) setWorldDifficulty(w, Difficulty.HARD);
+            }
         }
         reload();
     }
