@@ -213,7 +213,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
             if(PlayerDB.init.isTutorial(e.getPlayer())) {
                 e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
             } else {
-                e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, -55.5, 0.5));
+                e.getPlayer().chat("/튜토리얼");
             }
         }
     }
@@ -255,7 +255,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
             if(!(sender instanceof Player p)) return true;
             if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
                 p.teleport(new Location(Bukkit.getWorld("world"), 0.5, 64, 0.5, -90, 0));
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             } else {
                 BungeeAPI.sendBungeePlayer(p.getName(), ServerType.SPAWN_SERVER);
             }
@@ -264,7 +264,16 @@ public final class CommandManager extends JavaPlugin implements Listener {
             if(!(sender instanceof Player p)) return true;
             if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
                 p.teleport(new Location(Bukkit.getWorld("world"), 0.5, -55, 0.5, -90, 0));
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                p.sendMessage("");
+                p.sendMessage(chat("  &6서버에 오신 것을 환영합니다!"));
+                p.sendMessage(chat("  &a튜토리얼을 모두 마치신 후, 서버를 플레이 하실 수 있습니다."));
+                p.sendMessage("");
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+                    p.playSound(p.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 0.75f);
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2f);
+                    p.sendTitle(chat("&6튜토리얼"), chat("&e완료 후 서버를 플레이 하실 수 있습니다."), 20, 120, 40);
+                }, 20);
             } else {
                 p.sendMessage(chat("&c스폰 서버에서만 사용 가능합니다!"));
             }

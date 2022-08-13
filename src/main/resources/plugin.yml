@@ -8,6 +8,8 @@ depend:
 commands:
   reloadcommand:
     usage: "/reloadcommand"
+    aliases:
+      - rc
   spawn:
     usage: "/spawn"
     aliases:
