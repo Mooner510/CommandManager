@@ -237,7 +237,17 @@ public final class CommandManager extends JavaPlugin implements Listener {
             if(PlayerDB.init.isTutorial(e.getPlayer())) {
                 e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
             } else {
-                e.getPlayer().chat("/튜토리얼");
+                e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, -55, 0.5, -90, 0));
+                e.getPlayer().sendMessage("");
+                e.getPlayer().sendMessage(chat("  &6서버에 오신 것을 환영합니다!"));
+                e.getPlayer().sendMessage(chat("  &a튜토리얼을 모두 마치신 후, 서버를 플레이 하실 수 있습니다."));
+                e.getPlayer().sendMessage("");
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 0.75f);
+                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2f);
+                    e.getPlayer().sendTitle(chat("&6튜토리얼"), chat("&e완료 후 서버를 플레이 하실 수 있습니다."), 20, 120, 40);
+                }, 20);
             }
         } else {
             if (!PlayerDB.init.isTutorial(e.getPlayer())) {
