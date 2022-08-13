@@ -3,6 +3,7 @@ package org.mooner.commandmanager;
 import com.google.common.collect.ImmutableSet;
 import de.epiceric.shopchest.event.ShopCreateEvent;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,16 +12,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mooner.commandmanager.shop.ShopDistance;
 import org.mooner.moonerbungeeapi.api.BungeeAPI;
 import org.mooner.moonerbungeeapi.api.ServerType;
+import org.mooner.moonerbungeeapi.db.PlayerDB;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -167,14 +171,18 @@ public final class CommandManager extends JavaPlugin implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCommandRun(PlayerCommandPreprocessEvent e) {
+        if(e.isCancelled()) return;
         final String[] s = e.getMessage().substring(1).split(" ");
         if(!e.getPlayer().isOp() && !allowedCommands.contains(s[0])) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 사용할 수 없습니다! 관리자에게 문의하세요.");
         }
     }
+
+//    @EventHandler
+//    public void onServerChange()
 
     @EventHandler
     public void onPlace(BlockPlaceEvent e) {
@@ -198,7 +206,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         if(e.getPlayer().isOp()) return;
         if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER) {
-            if(e.getPlayer().hasPlayedBefore()) {
+            if(PlayerDB.init.isTutorial(e.getPlayer())) {
                 e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
             } else {
                 e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, -55.5, 0.5));
@@ -206,7 +214,32 @@ public final class CommandManager extends JavaPlugin implements Listener {
         }
     }
 
-    ImmutableSet<Material> helmets = ImmutableSet.of(Material.CHAINMAIL_HELMET, Material.DIAMOND_HELMET, Material.GOLDEN_HELMET, Material.IRON_HELMET, Material.LEATHER_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET, Material.CARVED_PUMPKIN, Material.SKELETON_SKULL, Material.WITHER_SKELETON_SKULL, Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.ZOMBIE_HEAD, Material.PLAYER_HEAD);
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        if(BungeeAPI.getServerType(port) != ServerType.SPAWN_SERVER && !e.getPlayer().getWorld().getName().equals("world")) return;
+        final Location to;
+        if((to = e.getTo()) != null) {
+            if(to.getY() <= -50 && to.getY() >= -60) {
+                Location loc = to.clone().add(0, -1, 0);
+                final Block b = loc.getBlock();
+                if (b.getType() == Material.BEEHIVE) {
+                    if (!PlayerDB.init.isTutorial(e.getPlayer())) {
+                        PlayerDB.init.setTutorial(e.getPlayer(), true);
+                    }
+                    e.getPlayer().chat("/spawn");
+                    e.getPlayer().sendMessage("");
+                    e.getPlayer().sendMessage(chat("  &6튜토리얼을 완료 했습니다!"));
+                    e.getPlayer().sendMessage(chat("  &a즐거운 시간 되세요!"));
+                    e.getPlayer().sendMessage("");
+                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 1.5f);
+                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.5f);
+                    e.getPlayer().sendTitle(chat("&6튜토리얼 완료!"), "&eLite24&f에 오신 것을 환영합니다!", 20, 120, 40);
+                }
+            }
+        }
+    }
+
+    private static final ImmutableSet<Material> helmets = ImmutableSet.of(Material.CHAINMAIL_HELMET, Material.DIAMOND_HELMET, Material.GOLDEN_HELMET, Material.IRON_HELMET, Material.LEATHER_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET, Material.CARVED_PUMPKIN, Material.SKELETON_SKULL, Material.WITHER_SKELETON_SKULL, Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.ZOMBIE_HEAD, Material.PLAYER_HEAD);
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
