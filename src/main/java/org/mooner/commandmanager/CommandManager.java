@@ -1,10 +1,7 @@
 package org.mooner.commandmanager;
 
 import de.epiceric.shopchest.event.ShopCreateEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mooner.commandmanager.shop.ShopDistance;
 import org.mooner.moonerbungeeapi.api.BungeeAPI;
@@ -30,6 +28,8 @@ import java.util.HashSet;
 import static org.mooner.moonerbungeeapi.api.Rank.chat;
 
 public final class CommandManager extends JavaPlugin implements Listener {
+    public static CommandManager plugin;
+
     private static HashSet<String> allowedCommands;
     private static HashSet<Material> bannedItem;
     private static HashMap<Material, ShopDistance> shopData;
@@ -38,6 +38,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        plugin = this;
         getLogger().info("Plugin Enabled!");
         Bukkit.getPluginManager().registerEvents(this, this);
         reload();
@@ -197,11 +198,31 @@ public final class CommandManager extends JavaPlugin implements Listener {
         } else if(command.getName().equals("spawn")) {
             if(!(sender instanceof Player p)) return true;
             if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
-                p.sendMessage(chat("&c이미 스폰입니다!"));
+                p.teleport(new Location(Bukkit.getWorld("world"), 0.5, 64, 0.5, -90, 0));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             } else {
                 BungeeAPI.sendBungeePlayer(p.getName(), ServerType.SPAWN_SERVER);
             }
+            return true;
+        } else if(command.getName().equals("tutorial")) {
+            if(!(sender instanceof Player p)) return true;
+            if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
+                p.teleport(new Location(Bukkit.getWorld("world"), 0.5, -56, 0.5, -90, 0));
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            } else {
+                p.sendMessage(chat("&c스폰 서버에서만 사용 가능합니다!"));
+            }
+            return true;
+        } else if(command.getName().equals("hat")) {
+            if(!(sender instanceof Player p)) return true;
+            final ItemStack i = p.getInventory().getItemInMainHand().clone();
+            if(i.getType() == Material.AIR) {
+                p.sendMessage(chat("&c손에 아이템을 들어주세요!"));
+                return true;
+            }
+            p.getInventory().setItemInMainHand(p.getInventory().getHelmet());
+            p.getInventory().setHelmet(i);
+            p.sendMessage(chat("&a멋진 모자네요!"));
             return true;
         }
         return false;

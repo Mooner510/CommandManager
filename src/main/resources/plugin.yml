@@ -14,3 +14,12 @@ commands:
       - 스폰
       - 넴주
       - tmvhs
+  tutorial:
+    aliases:
+      - xbxhfldjf
+      - 튜토리얼
+  hat:
+    usage: "/hat"
+    aliases:
+      - 모자
+      - ahwk
