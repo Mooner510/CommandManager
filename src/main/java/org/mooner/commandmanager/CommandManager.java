@@ -26,12 +26,15 @@ import org.mooner.commandmanager.shop.ShopDistance;
 import org.mooner.moonerbungeeapi.api.BungeeAPI;
 import org.mooner.moonerbungeeapi.api.ServerType;
 import org.mooner.moonerbungeeapi.db.PlayerDB;
+import org.mooner.moonereco.API.EcoAPI;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.mooner.moonerbungeeapi.api.Rank.chat;
 
@@ -199,7 +202,8 @@ public final class CommandManager extends JavaPlugin implements Listener {
         if(s[0].equals("is") || s[0].equals("island")) {
             if(BungeeAPI.getServerType(port) != ServerType.MAIN_SERVER) {
                 e.setCancelled(true);
-                e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 메인 서버에서만 사용 가능합니다.");
+                BungeeAPI.sendBungeePlayer(e.getPlayer().getName(), ServerType.MAIN_SERVER);
+//                e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 메인 서버에서만 사용 가능합니다.");
                 return;
             }
         }
@@ -234,10 +238,10 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         if(e.getPlayer().isOp()) return;
         if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER) {
-            if(PlayerDB.init.isTutorial(e.getPlayer())) {
-                e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
-            } else {
-                Bukkit.getScheduler().runTaskLater(this, () -> {
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if(PlayerDB.init.isTutorial(e.getPlayer())) {
+                    e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
+                } else {
                     e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, -55, 0.5, -90, 0));
                     e.getPlayer().sendMessage("");
                     e.getPlayer().sendMessage(chat("  &6서버에 오신 것을 환영합니다!"));
@@ -248,8 +252,8 @@ public final class CommandManager extends JavaPlugin implements Listener {
                     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 0.75f);
                     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2f);
                     e.getPlayer().sendTitle(chat("&6튜토리얼"), chat("&e완료 후 서버를 플레이 하실 수 있습니다."), 20, 120, 40);
-                }, 10);
-            }
+                }
+            }, 20);
         } else {
             if (!PlayerDB.init.isTutorial(e.getPlayer())) {
                 BungeeAPI.sendBungeePlayer(e.getPlayer().getName(), ServerType.SPAWN_SERVER);
@@ -268,12 +272,24 @@ public final class CommandManager extends JavaPlugin implements Listener {
                 if (b.getType() == Material.BEEHIVE) {
                     if (!PlayerDB.init.isTutorial(e.getPlayer())) {
                         PlayerDB.init.setTutorial(e.getPlayer(), true);
+                        e.getPlayer().sendMessage(
+                                "",
+                                chat("  &6튜토리얼을 완료 했습니다!"),
+                                chat("  &e튜토리얼 완료 보상으로 지원금 &63000원&e이 지급되었습니다."),
+                                chat("  &a즐거운 시간 되세요!"),
+                                ""
+                        );
+                        EcoAPI.init.addPay(e.getPlayer(), 3000);
+                    } else {
+                        e.getPlayer().sendMessage(
+                                "",
+                                chat("  &6튜토리얼을 완료 했습니다!"),
+                                chat("  &a즐거운 시간 되세요!"),
+                                ""
+                        );
                     }
-                    e.getPlayer().chat("/spawn");
-                    e.getPlayer().sendMessage("");
-                    e.getPlayer().sendMessage(chat("  &6튜토리얼을 완료 했습니다!"));
-                    e.getPlayer().sendMessage(chat("  &a즐거운 시간 되세요!"));
-                    e.getPlayer().sendMessage("");
+                    e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 64, 0.5, -90, 0));
+                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 1.5f);
                     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.5f);
                     e.getPlayer().sendTitle(chat("&6튜토리얼 완료!"), chat("&eLite24&f에 오신 것을 환영합니다!"), 20, 120, 40);
@@ -299,14 +315,31 @@ public final class CommandManager extends JavaPlugin implements Listener {
                 BungeeAPI.sendBungeePlayer(p.getName(), ServerType.SPAWN_SERVER);
             }
             return true;
+        } else if(command.getName().equals("reboot")) {
+            Bukkit.broadcastMessage("");
+            Bukkit.broadcastMessage(chat("  &6서버 재시작 안내"));
+            Bukkit.broadcastMessage(chat("  &f서버가 &a30초 &f후에 재시작됩니다."));
+            Bukkit.broadcastMessage("");
+            if(args.length == 0) Reboot.reboot(null);
+            else Reboot.reboot(ServerType.valueOf(args[0]));
+            return true;
+        } else if(command.getName().equals("상점")) {
+            if(!(sender instanceof Player p)) return true;
+            if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
+                p.teleport(new Location(Bukkit.getWorld("world"), -16.5, 2, -150.5, 90, 0));
+                p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            } else {
+                p.sendMessage(chat("&c스폰 서버에서만 사용 가능합니다!"));
+            }
+            return true;
         } else if(command.getName().equals("tutorial")) {
             if(!(sender instanceof Player p)) return true;
             if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SPAWN_SERVER) {
                 p.teleport(new Location(Bukkit.getWorld("world"), 0.5, -55, 0.5, -90, 0));
-                p.sendMessage("");
-                p.sendMessage(chat("  &6서버에 오신 것을 환영합니다!"));
-                p.sendMessage(chat("  &a튜토리얼을 모두 마치신 후, 서버를 플레이 하실 수 있습니다."));
-                p.sendMessage("");
+                p.sendMessage("",
+                        chat("  &6서버에 오신 것을 환영합니다!"),
+                        chat("  &a튜토리얼을 모두 마치신 후, 서버를 플레이 하실 수 있습니다."),
+                        "");
                 Bukkit.getScheduler().runTaskLater(this, () -> {
                     p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                     p.playSound(p.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 0.8f, 0.75f);
@@ -316,6 +349,14 @@ public final class CommandManager extends JavaPlugin implements Listener {
             } else {
                 p.sendMessage(chat("&c스폰 서버에서만 사용 가능합니다!"));
             }
+            return true;
+        } else if(command.getName().equals("command")) {
+            FileConfiguration config = loadConfig(dataPath, "commands.yml");
+            allowedCommands = new HashSet<>();
+            final ConfigurationSection g = config.getConfigurationSection("global");
+            if(g != null) allowedCommands.addAll(g.getKeys(false));
+            final ConfigurationSection css = config.getConfigurationSection("server." + BungeeAPI.getServerType(Bukkit.getServer().getPort()).getTag());
+            if(css != null) allowedCommands.addAll(css.getKeys(false));
             return true;
         } else if(command.getName().equals("hat")) {
             if(!(sender instanceof Player p)) return true;
@@ -343,5 +384,19 @@ public final class CommandManager extends JavaPlugin implements Listener {
             return true;
         }
         return false;
+    }
+
+    private final List<String> servers = Arrays.stream(ServerType.values()).map(Enum::toString).toList();
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        switch (command.getName()) {
+            case "reboot" -> {
+                if(args.length == 0) {
+                    return servers;
+                }
+            }
+        }
+        return null;
     }
 }

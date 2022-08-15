@@ -5,6 +5,7 @@ api-version: 1.18
 depend:
   - BungeeAPI
   - ShopChest-1.18
+  - MoonerEco
 
 commands:
   reloadcommand:
@@ -17,6 +18,10 @@ commands:
       - 스폰
       - 넴주
       - tmvhs
+  상점:
+    usage: "/상점"
+    aliases:
+      - tkdwja
   tutorial:
     aliases:
       - xbxhfldjf
@@ -26,3 +31,9 @@ commands:
     aliases:
       - 모자
       - ahwk
+  reboot:
+    permission: command.reboot
+  command:
+    permission: command.command
+    aliases:
+      - cmd

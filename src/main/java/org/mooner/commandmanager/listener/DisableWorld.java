@@ -7,7 +7,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.mooner.commandmanager.CommandManager;
@@ -143,11 +146,11 @@ public class DisableWorld implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onSpawn(EntitySpawnEvent e) {
-        if(!e.getEntity().getWorld().getName().startsWith("world")) return;
-        e.setCancelled(true);
-    }
+//    @EventHandler(priority = EventPriority.HIGH)
+//    public void onSpawn(EntitySpawnEvent e) {
+//        if(!e.getEntity().getWorld().getName().startsWith("world")) return;
+//        e.setCancelled(true);
+//    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockChange(EntityChangeBlockEvent e) {
