@@ -390,11 +390,9 @@ public final class CommandManager extends JavaPlugin implements Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        switch (command.getName()) {
-            case "reboot" -> {
-                if(args.length == 0) {
-                    return servers;
-                }
+        if ("reboot".equals(command.getName())) {
+            if (args.length == 1) {
+                return servers.stream().filter(s -> s.startsWith(args[0])).toList();
             }
         }
         return null;
