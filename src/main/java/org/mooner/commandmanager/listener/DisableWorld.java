@@ -3,6 +3,7 @@ package org.mooner.commandmanager.listener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,13 +15,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.mooner.commandmanager.CommandManager;
-import org.mooner.moonerbungeeapi.api.BungeeAPI;
 import org.mooner.moonerbungeeapi.api.ServerType;
 
 public class DisableWorld implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if(BungeeAPI.getServerType(CommandManager.port) != ServerType.MAIN_SERVER) return;
+        if(CommandManager.serverType != ServerType.MAIN_SERVER) return;
         if (e.getPlayer().getWorld().getName().equals("world")) {
             e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 64, -1.5, 0, 0));
             Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> e.getPlayer().chat("/is"), 30);
@@ -29,7 +29,7 @@ public class DisableWorld implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if(BungeeAPI.getServerType(CommandManager.port) != ServerType.MAIN_SERVER) return;
+        if(CommandManager.serverType != ServerType.MAIN_SERVER) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
         if(e.getFrom().getY() <= 40 || e.getFrom().getX() > 100 || e.getFrom().getX() < -100 || e.getFrom().getZ() > 100 || e.getFrom().getZ() < -100) {
             e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 64, -1.5, 0, 0));
@@ -144,6 +144,14 @@ public class DisableWorld implements Listener {
     public void onDamage(EntityDamageEvent e) {
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
+        if(CommandManager.serverType == ServerType.SPAWN_SERVER) {
+            if (e.getCause() == EntityDamageEvent.DamageCause.LAVA || e.getCause() == EntityDamageEvent.DamageCause.FIRE) {
+                if (e.getEntity() instanceof Player p) {
+                    p.chat("/spawn");
+                    Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> p.setFireTicks(0), 2);
+                }
+            }
+        }
     }
 
 //    @EventHandler(priority = EventPriority.HIGH)

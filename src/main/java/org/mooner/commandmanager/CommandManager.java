@@ -10,13 +10,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -42,7 +40,7 @@ import static org.mooner.moonerbungeeapi.api.Rank.chat;
 
 public final class CommandManager extends JavaPlugin implements Listener {
     public static CommandManager plugin;
-    public static int port;
+    public static ServerType serverType;
 
     private static HashSet<String> allowedCommands;
     private static HashSet<Material> bannedItem;
@@ -60,10 +58,10 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
-        port = Bukkit.getServer().getPort();
+        serverType = BungeeAPI.getServerType(Bukkit.getPort());
         getLogger().info("Plugin Enabled!");
         Bukkit.getPluginManager().registerEvents(this, this);
-        switch (BungeeAPI.getServerType(port)) {
+        switch (serverType) {
             case MAIN_SERVER, SPAWN_SERVER -> {
                 Bukkit.getPluginManager().registerEvents(new DisableWorld(), this);
                 for (World w : Bukkit.getWorlds()) setWorldDifficulty(w, Difficulty.PEACEFUL);
@@ -202,7 +200,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
         if(e.isCancelled()) return;
         final String[] s = e.getMessage().substring(1).split(" ");
         if(s[0].equals("is") || s[0].equals("island")) {
-            if(BungeeAPI.getServerType(port) != ServerType.MAIN_SERVER) {
+            if(serverType != ServerType.MAIN_SERVER) {
                 e.setCancelled(true);
                 BungeeAPI.sendBungeePlayer(e.getPlayer().getName(), ServerType.MAIN_SERVER);
 //                e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 메인 서버에서만 사용 가능합니다.");
@@ -239,7 +237,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         if(e.getPlayer().isOp()) return;
-        if(BungeeAPI.getServerType(port) == ServerType.SPAWN_SERVER) {
+        if(serverType == ServerType.SPAWN_SERVER) {
             Bukkit.getScheduler().runTaskLater(this, () -> {
                 if(PlayerDB.init.isTutorial(e.getPlayer())) {
                     e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
@@ -264,17 +262,8 @@ public final class CommandManager extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onDamage(EntityDamageEvent e) {
-        if(BungeeAPI.getServerType(port) != ServerType.SPAWN_SERVER) return;
-        if(e.getCause() != EntityDamageEvent.DamageCause.LAVA) return;
-        if(!(e.getEntity() instanceof Player p)) return;
-        e.setCancelled(true);
-        p.chat("/spawn");
-    }
-
-    @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if(BungeeAPI.getServerType(port) != ServerType.SPAWN_SERVER && !e.getPlayer().getWorld().getName().equals("world")) return;
+        if(serverType != ServerType.SPAWN_SERVER && !e.getPlayer().getWorld().getName().equals("world")) return;
         final Location to;
         if((to = e.getTo()) != null) {
             if(to.getY() <= -50 && to.getY() >= -60) {

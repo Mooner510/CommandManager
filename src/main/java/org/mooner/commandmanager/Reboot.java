@@ -23,31 +23,31 @@ public class Reboot {
             }, 400);
             Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendTitle(" ", chat("&c5초 &6후 &a서버를 재시작 합니다."), 5, 30, 20);
+                    p.sendTitle("&b서버 리붓", chat("&c5초 &6후 &a서버를 재시작 합니다."), 0, 30, 20);
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 }
             }, 500);
             Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendTitle(" ", chat("&c4초 &6후 &a서버를 재시작 합니다."), 5, 30, 20);
+                    p.sendTitle("&b서버 리붓", chat("&c4초 &6후 &a서버를 재시작 합니다."), 0, 30, 20);
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 }
             }, 520);
             Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendTitle(" ", chat("&c3초 &6후 &a서버를 재시작 합니다."), 5, 30, 20);
+                    p.sendTitle("&b서버 리붓", chat("&c3초 &6후 &a서버를 재시작 합니다."), 0, 30, 20);
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 }
             }, 540);
             Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendTitle(" ", chat("&c2초 &6후 &a서버를 재시작 합니다."), 5, 30, 20);
+                    p.sendTitle("&b서버 리붓", chat("&c2초 &6후 &a서버를 재시작 합니다."), 0, 30, 20);
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 }
             }, 560);
             Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendTitle(" ", chat("&c1초 &6후 &a서버를 재시작 합니다."), 5, 30, 20);
+                    p.sendTitle("&b서버 리붓", chat("&c1초 &6후 &a서버를 재시작 합니다."), 0, 30, 20);
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 }
             }, 580);
