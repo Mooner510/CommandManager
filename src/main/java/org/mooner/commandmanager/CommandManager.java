@@ -10,11 +10,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -259,6 +261,15 @@ public final class CommandManager extends JavaPlugin implements Listener {
                 BungeeAPI.sendBungeePlayer(e.getPlayer().getName(), ServerType.SPAWN_SERVER);
             }
         }
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageEvent e) {
+        if(BungeeAPI.getServerType(port) != ServerType.SPAWN_SERVER) return;
+        if(e.getCause() != EntityDamageEvent.DamageCause.LAVA) return;
+        if(!(e.getEntity() instanceof Player p)) return;
+        e.setCancelled(true);
+        p.chat("/spawn");
     }
 
     @EventHandler
