@@ -3,6 +3,7 @@ package org.mooner.commandmanager.listener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +17,9 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.mooner.commandmanager.CommandManager;
 import org.mooner.moonerbungeeapi.api.ServerType;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class DisableWorld implements Listener {
     @EventHandler
@@ -140,15 +144,23 @@ public class DisableWorld implements Listener {
         e.setCancelled(true);
     }
 
+    private static final HashMap<UUID, Long> teleportTime = new HashMap<>();
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent e) {
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
         if(CommandManager.serverType == ServerType.SPAWN_SERVER) {
-            if (e.getCause() == EntityDamageEvent.DamageCause.LAVA || e.getCause() == EntityDamageEvent.DamageCause.FIRE) {
+            if (e.getCause() == EntityDamageEvent.DamageCause.LAVA) {
                 if (e.getEntity() instanceof Player p) {
-                    p.chat("/spawn");
-                    Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> p.setFireTicks(0), 2);
+                    final Long time = teleportTime.get(p.getUniqueId());
+                    if(time == null || time + 3000 <= System.currentTimeMillis()) {
+                        p.teleport(new Location(Bukkit.getWorld("world"), 0.5, 64, 0.5, -90, 0));
+                        p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+                        p.setFireTicks(0);
+                        teleportTime.put(p.getUniqueId(), System.currentTimeMillis());
+                        Bukkit.getScheduler().runTaskLater(CommandManager.plugin, () -> p.setFireTicks(0), 2);
+                    }
                 }
             }
         }
