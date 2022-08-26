@@ -238,9 +238,12 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         if(e.getPlayer().isOp()) return;
         if(serverType == ServerType.SPAWN_SERVER) {
+            final Location loc = new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5);
+            e.getPlayer().teleport(loc);
             Bukkit.getScheduler().runTaskLater(this, () -> {
+                e.getPlayer().teleport(loc);
                 if (PlayerDB.init.isTutorial(e.getPlayer())) {
-                    e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, 65, 0.5));
+                    e.getPlayer().teleport(loc);
                 } else {
                     e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 0.5, -55, 0.5, -90, 0));
                     e.getPlayer().sendMessage("",
@@ -319,6 +322,14 @@ public final class CommandManager extends JavaPlugin implements Listener {
                 p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             } else {
                 BungeeAPI.sendBungeePlayer(p.getName(), ServerType.SPAWN_SERVER);
+            }
+            return true;
+        } else if(command.getName().equals("survival")) {
+            if(!(sender instanceof Player p)) return true;
+            if (BungeeAPI.getServerType(Bukkit.getServer().getPort()) == ServerType.SURVIVAL_SERVER) {
+                p.sendMessage(chat("&c현재 접속하신 서버가 야생 서버입니다!"));
+            } else {
+                BungeeAPI.sendBungeePlayer(p.getName(), ServerType.SURVIVAL_SERVER);
             }
             return true;
         } else if(command.getName().equals("reboot")) {

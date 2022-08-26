@@ -18,6 +18,13 @@ commands:
       - 스폰
       - 넴주
       - tmvhs
+  survival:
+    usage: "/survival"
+    aliases:
+      - 야생
+      - ditod
+      - 서바이벌
+      - tjqkdlqjf
   상점:
     usage: "/상점"
     aliases:
