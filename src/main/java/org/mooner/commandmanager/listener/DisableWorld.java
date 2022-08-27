@@ -91,6 +91,13 @@ public class DisableWorld implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         if(e.getPlayer().isOp()) return;
         if(!e.getPlayer().getWorld().getName().startsWith("world")) return;
+        if(e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.LECTERN) return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onLectern(PlayerTakeLecternBookEvent e) {
+        if(e.getPlayer().isOp()) return;
         e.setCancelled(true);
     }
 
@@ -133,7 +140,7 @@ public class DisableWorld implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageByEntityEvent e) {
-        if(!e.getDamager().isOp()) return;
+        if(e.getDamager().isOp()) return;
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
     }
