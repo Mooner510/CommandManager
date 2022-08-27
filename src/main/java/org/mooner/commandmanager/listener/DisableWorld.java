@@ -140,6 +140,10 @@ public class DisableWorld implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageByEntityEvent e) {
+        if(e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
+            e.setCancelled(true);
+            return;
+        }
         if(e.getDamager().isOp()) return;
         if(!e.getEntity().getWorld().getName().startsWith("world")) return;
         e.setCancelled(true);
