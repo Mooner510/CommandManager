@@ -41,6 +41,7 @@ import static org.mooner.moonerbungeeapi.api.Rank.chat;
 public final class CommandManager extends JavaPlugin implements Listener {
     public static CommandManager plugin;
     public static ServerType serverType;
+    public static boolean whitelist;
 
     private static HashSet<String> allowedCommands;
     private static HashSet<Material> bannedItem;
@@ -199,14 +200,18 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public void onCommandRun(PlayerCommandPreprocessEvent e) {
         if(e.isCancelled()) return;
         final String[] s = e.getMessage().substring(1).split(" ");
-        if(s[0].equals("is") || s[0].equals("island")) {
+        if(s[0].equalsIgnoreCase("is") || s[0].equalsIgnoreCase("island")) {
             if(serverType != ServerType.MAIN_SERVER) {
                 e.setCancelled(true);
                 BungeeAPI.sendBungeePlayer(e.getPlayer().getName(), ServerType.MAIN_SERVER);
 //                e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 메인 서버에서만 사용 가능합니다.");
-                return;
             }
         }
+//        else if(s[0].equalsIgnoreCase("whitelist") && s[1].equalsIgnoreCase("on")) {
+//            whitelist = !whitelist;
+//            if(whitelist) e.getPlayer().sendMessage("Whistlist is on");
+//            else e.getPlayer().sendMessage("Whistlist is off");
+//        }
         if(!e.getPlayer().isOp() && !allowedCommands.contains(s[0])) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED + "해당 명령어는 사용할 수 없습니다! 관리자에게 문의하세요.");
