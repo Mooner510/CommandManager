@@ -32,6 +32,8 @@ public class Reboot {
                 p.sendTitle(chat("&b서버 리붓"), chat("&c" + time + "초 &6후 &a" + type.getTag() + "로 이동됩니다."), 3, 30, 0);
             if(time == 60 || time == 30 || time == 10 || time <= 5) {
                 for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+            } else {
+                for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.2f, 0.75f);
             }
             if(time-- <= 1) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
