@@ -1,6 +1,7 @@
 package org.mooner.commandmanager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,21 +23,21 @@ public class Reboot {
     private static int time;
     private static ServerType serverType = null;
 
+    public static String timeColor() {
+        if(time <= 5) return ChatColor.RED.toString() + time;
+        else if(time <= 10) return ChatColor.GOLD.toString() + time;
+        else if(time <= 30) return ChatColor.YELLOW.toString() + time;
+        else return ChatColor.GRAY.toString() + time;
+    }
+
     public static void reboot(ServerType type) {
         serverType = type;
         time = 60;
         Bukkit.getPluginManager().registerEvents(new RebootBlocker(), CommandManager.plugin);
         Bukkit.getScheduler().runTaskTimer(CommandManager.plugin, task -> {
             final Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-            for (Player p : players)
-                p.sendTitle(chat("&b서버 리붓"), chat("&c" + time + "초 &6후 &a" + type.getTag() + "로 이동됩니다."), 3, 30, 0);
-            if(time == 60 || time == 30 || time == 10 || time <= 5) {
-                for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
-            } else {
-                for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.2f, 0.75f);
-            }
-            if(time-- <= 1) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
+            if(time-- <= 0) {
+                for (Player p : players) {
                     BungeeAPI.sendBungeePlayer(p.getName(), type);
                 }
                 Bukkit.getScheduler().runTaskTimer(CommandManager.plugin, task2 -> {
@@ -46,6 +47,16 @@ public class Reboot {
                     }
                 }, 20, 20);
                 task.cancel();
+            } else {
+                for (Player p : players)
+                    p.sendTitle(chat("&b서버 리붓"), chat(timeColor() + "초 &a후 " + type.getTag() + "로 이동됩니다."), 0, 30, 0);
+                if (time == 60 || time == 30 || time == 10) {
+                    for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                } else if (time <= 5) {
+                    for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
+                } else {
+                    for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.075f, 0.75f);
+                }
             }
         }, 0, 20);
     }
