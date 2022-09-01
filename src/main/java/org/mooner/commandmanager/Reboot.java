@@ -115,6 +115,7 @@ public class Reboot {
         public void onInventoryOpen(InventoryOpenEvent e) {
             final String namer = namer(e.getInventory().getType());
             if(namer != null) {
+                if(e.getInventory().getType() == InventoryType.CHEST && e.getInventory().getLocation() == null) return;
                 final Player player = (Player) e.getPlayer();
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(chat("&c아이템 사라짐 방지를 위해 "+ namer +" 사용할 수 없습니다.")));
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.75f, 1f);
