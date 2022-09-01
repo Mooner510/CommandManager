@@ -336,9 +336,26 @@ public final class CommandManager extends JavaPlugin implements Listener {
             Bukkit.broadcastMessage("");
             Bukkit.broadcastMessage(chat("  &6서버 재시작 안내"));
             Bukkit.broadcastMessage(chat("  &f서버가 &a30초 &f후에 재시작됩니다."));
+            if(args.length == 0) {
+                switch (serverType) {
+                    case MAIN_SERVER, SPAWN_SERVER -> Reboot.reboot(ServerType.SURVIVAL_SERVER);
+                    case SURVIVAL_SERVER -> Reboot.reboot(ServerType.SPAWN_SERVER);
+                }
+            } else {
+                try {
+                    final ServerType type = ServerType.valueOf(args[0]);
+                    if (type == serverType) {
+                        sender.sendMessage(chat("&c같은 서버로 옮길 수 없습니다!"));
+                    } else Reboot.reboot(type);
+                } catch (Exception e) {
+                    Bukkit.broadcastMessage(chat("  &e사유: &f" + String.join(" ", args)));
+                    switch (serverType) {
+                        case MAIN_SERVER, SPAWN_SERVER -> Reboot.reboot(ServerType.SURVIVAL_SERVER);
+                        case SURVIVAL_SERVER -> Reboot.reboot(ServerType.SPAWN_SERVER);
+                    }
+                }
+            }
             Bukkit.broadcastMessage("");
-            if(args.length == 0) Reboot.reboot(null);
-            else Reboot.reboot(ServerType.valueOf(args[0]));
             return true;
         } else if(command.getName().equals("상점")) {
             if(!(sender instanceof Player p)) return true;
@@ -409,7 +426,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if ("reboot".equals(command.getName())) {
             if (args.length == 1) {
-                return servers.stream().filter(s -> s.startsWith(args[0])).toList();
+                return servers.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).toList();
             }
         }
         return null;
