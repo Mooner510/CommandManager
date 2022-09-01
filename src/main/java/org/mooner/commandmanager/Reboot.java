@@ -59,6 +59,7 @@ public class Reboot {
                     for (Player p : players) {
                         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
                         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 0.5f);
+                        p.closeInventory();
                     }
                 } else if (time == 30 || time == 10) {
                     for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
