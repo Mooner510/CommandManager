@@ -335,7 +335,7 @@ public final class CommandManager extends JavaPlugin implements Listener {
         } else if(command.getName().equals("reboot")) {
             Bukkit.broadcastMessage("");
             Bukkit.broadcastMessage(chat("  &6서버 재시작 안내"));
-            Bukkit.broadcastMessage(chat("  &f서버가 &a30초 &f후에 재시작됩니다."));
+            Bukkit.broadcastMessage(chat("  &f서버가 &a60초 &f후에 재시작됩니다."));
             if(args.length == 0) {
                 switch (serverType) {
                     case MAIN_SERVER, SPAWN_SERVER -> Reboot.reboot(ServerType.SURVIVAL_SERVER);
