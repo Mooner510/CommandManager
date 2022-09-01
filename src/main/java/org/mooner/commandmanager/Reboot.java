@@ -37,7 +37,10 @@ public class Reboot {
         Bukkit.getScheduler().runTaskTimer(CommandManager.plugin, task -> {
             final Collection<? extends Player> players = Bukkit.getOnlinePlayers();
             if(time <= 0) {
-                for (Player p : players) BungeeAPI.sendBungeePlayer(p.getName(), type);
+                for (Player p : players) {
+                    p.sendTitle(" ", "&6이동중...", 0, 40, 10);
+                    BungeeAPI.sendBungeePlayer(p.getName(), type);
+                }
                 Bukkit.getScheduler().runTaskTimer(CommandManager.plugin, task2 -> {
                     if (Bukkit.getOnlinePlayers().isEmpty()) {
                         Bukkit.getScheduler().runTaskLater(CommandManager.plugin, Bukkit::shutdown, 20);
@@ -47,9 +50,13 @@ public class Reboot {
                 task.cancel();
             } else {
                 for (Player p : players)
-                    p.sendTitle(chat("&b서버 리붓"), chat(timeColor() + "초 &a후 " + type.getTag() + "로 이동됩니다."), 0, 30, 0);
-                for (Player p : players) p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 0.6f);
-                if (time == 60 || time == 30 || time == 10) {
+                    p.sendTitle(chat("&b서버 리붓"), chat(timeColor() + "초 &a후 " + type.getTag() + "로 이동됩니다."), 0, 20, 10);
+                if (time == 60) {
+                    for (Player p : players) {
+                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
+                        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 0.5f);
+                    }
+                } else if (time == 30 || time == 10) {
                     for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 } else if (time <= 5) {
                     for (Player p : players) p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
